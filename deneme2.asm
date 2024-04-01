@@ -102,4 +102,28 @@ end_inner_loop:
     lw $ra, 0($sp)          # restore return address
     addi $sp, $sp, 4        # deallocate space on stack
     jr $ra                  # return to caller
+    
+gcd:
+    # Function: gcd(a, b)
+    # Arguments:
+    #   $a0 = a
+    #   $a1 = b
+    # Return:
+    #   $v0 = GCD(a, b)
 
+    # Check if b == 0
+    beq $a1, $zero, return_a
+    
+    # Recursive call: gcd(b, a % b)
+    move $t0, $a0     # Save a into $t0
+    move $a0, $a1     # a = b
+    div $t0, $a1      # a % b, remainder stored in $t1
+    mfhi $a1          # b = remainder
+    
+    jal gcd           # Recursive call
+    
+    jr $ra            # Return
+    
+return_a:
+    move $v0, $a0     # Return a as GCD(a, 0)
+    jr $ra            # Return
