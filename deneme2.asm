@@ -9,41 +9,34 @@ space: .asciiz " "
 .text
 .globl main
 
+
+    
 main:
-    # Allocate memory for the array
-    li $v0, 9               # syscall 9: allocate memory
-    li $a0, 400             # allocate space for 100 integers (4 bytes each)
-    syscall
-    move $s0, $v0           # store the address of the allocated memory in $s0
+	li $v0, 4 
+	la $a0, prompt
+	syscall 
 
-    # Prompt for and read the elements of the array
-    li $v0, 4               # syscall 4: print string
-    la $a0, prompt          # load address of the prompt string
-    syscall
-
-    # Read integers until newline character is encountered
-    li $t1, 0               # initialize index counter to 0
-read_loop:
-    li $v0, 5               # syscall 5: read integer
-    syscall
-    sw $v0, 0($s0)          # store the integer in the array
-    addiu $s0, $s0, 4       # move to the next element in the array
-    addi $t1, $t1, 1        # increment index counter
-    lb $t2, 0($v0)          # load the last character read
-    bne $t2, '\n', read_loop    # if not newline, continue reading
-
-    # Store the length of the array
-    sw $t1, length
-
-    # Call the switch_elements function
-    la $a0, array
-    lw $a1, length
-    jal switch_elements
-
-    # Print the new array
-    li $v0, 4               # syscall 4: print string
-    la $a0, new_array_prompt  # load address of the new array prompt string
-    syscall
+	#reading array elements
+	li $v0, 5
+	syscall
+	move $s0, $v0	# s0 = a 0
+	li $v0, 5
+	syscall
+	move $s1, $v0   # s1 = a 1
+	li $v0, 5
+	syscall
+	move $s2, $v0	# s2 = a 2
+	li $v0, 5
+	syscall
+	move $s3, $v0  # s3 = a 3
+	li $v0, 5
+	syscall
+	move $s4, $v0	# s4 = a 4
+	li $v0, 5
+	syscall
+	move $s5, $v0  # s5 = a 5
+	
+	jal switch_elements
 
 print_loop:
     lw $a0, 0($s0)          # load integer from array
@@ -102,28 +95,32 @@ end_inner_loop:
     lw $ra, 0($sp)          # restore return address
     addi $sp, $sp, 4        # deallocate space on stack
     jr $ra                  # return to caller
-    
-gcd:
-    # Function: gcd(a, b)
-    # Arguments:
-    #   $a0 = a
-    #   $a1 = b
-    # Return:
-    #   $v0 = GCD(a, b)
 
-    # Check if b == 0
-    beq $a1, $zero, return_a
-    
-    # Recursive call: gcd(b, a % b)
-    move $t0, $a0     # Save a into $t0
-    move $a0, $a1     # a = b
-    div $t0, $a1      # a % b, remainder stored in $t1
-    mfhi $a1          # b = remainder
-    
-    jal gcd           # Recursive call
-    
-    jr $ra            # Return
-    
-return_a:
-    move $v0, $a0     # Return a as GCD(a, 0)
-    jr $ra            # Return
+gcd:
+    # $a0 = a, $a1 = b
+    # Return value: gcd(a, b)
+    addi $sp, $sp, -8         # reserve space on stack
+    sw $a0, 0($sp)            # save a
+    sw $ra, 4($sp)            # save return address
+
+    bne $a1, $zero, gcd_loop  # if b != 0, continue loop
+    move $v0, $a0             # return a if b is 0
+    j gcd_exit
+
+gcd_loop:
+    # calculate (a % b) and store the result in $t0
+    div $a0, $a1
+    mfhi $t0
+
+    # set a = b, b = a % b (remainder)
+    move $a0, $a1
+    move $a1, $t0
+
+    # repeat until b becomes 0
+    bne $a1, $zero, gcd_loop
+
+gcd_exit:
+    lw $a0, 0($sp)            # restore a
+    lw $ra, 4($sp)            # restore return address
+    addi $sp, $sp, 8          # deallocate stack space
+    jr $ra                    # return
