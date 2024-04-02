@@ -1,6 +1,10 @@
 	.data
-coefficientPrompt: .asciiz "Please enter the coefficients: "
-twoNumberPrompt: .asciiz "Please enter the first two numbers of the sequence: "
+aCoefficientPrompt: .asciiz "Please enter the coefficient a: "
+bCoefficientPrompt: .asciiz "Please enter the coefficient b: "
+
+firstNumberPrompt: .asciiz "Please enter the first number of the sequence: "
+secondNumberPrompt: .asciiz "Please enter the first second number of the sequence: "
+
 calculatePrompt: .asciiz "Enter the number you want to calculate: "
 output1: .asciiz "Output: "
 output2: .asciiz ". element of the sequence is "
@@ -11,24 +15,34 @@ invalidInputMessage: .asciiz "Number you want to calculate is less than 1. Pleas
 	
 main:
 	li $v0, 4 
-	la $a0, coefficientPrompt
+	la $a0, aCoefficientPrompt
 	syscall 
 
 	#reading coefficient
 	li $v0, 5
 	syscall
 	move $s0, $v0	# s0 = a
+	
+	li $v0, 4 
+	la $a0, bCoefficientPrompt
+	syscall 
+	
 	li $v0, 5
 	syscall
 	move $s1, $v0   # s1 = b
 	
 	li $v0, 4 
-	la $a0, twoNumberPrompt
+	la $a0, firstNumberPrompt
 	syscall 
 	
 	li $v0, 5
 	syscall
 	move $s2, $v0	# s2 = f(0)
+	
+	li $v0, 4 
+	la $a0, secondNumberPrompt
+	syscall 
+	
 	li $v0, 5
 	syscall
 	move $s3, $v0	# s2 = f(1)
@@ -86,7 +100,10 @@ main:
 		
 		li $v0, 4 
 		la $a0, output3 
-		syscall 
+		syscall
+		
+		li $v0,10
+		syscall
 invalidInput:
 	li $v0, 4
 	la $a0, invalidInputMessage
