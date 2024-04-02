@@ -61,27 +61,35 @@ end_string:
     # store last int
     sw $t2, 0($s1)
     addi $t5, $t5, 1
-move $s3 , $t5
+    move $s3 , $t5
     # Print the array
     la $s1, inputArray           # Load the base address of the array
     li $t2, 0               # Initialize counter for number of elements printed
-
+	addi $s7, $s3, -1
+	lw $t4, 0($s1)
+	sw $t4, 0($s2)
 check:
-
-	beq $t6, $s3, print_output
-	jal find_gcd
 	addi $t6, $t6, 1 
+	beq $t6, $s7, print_output
+	jal find_gcd
+	
 	move $t7, $v0
 	beq $t7, 1, outputArray_gcd
 	jal find_lcm
 	move $t8, $v0
 	j outputArray_lcm
 find_gcd:
-    lw $a0, 0($s1)  # $t0'daki değer $a0'ye kopyalanır
+    lw $a0, 0($s2)  # $t0'daki değer $a0'ye kopyalanır
     lw $a1, 4($s1)
+    slt $t1, $a0, $a1
+    beq $t1 , 1 , swap
     #sonraki adres boş ise sistem kapatmalı kendini bu arada 
     j gcd_loop
-
+swap:
+	move $t1, $a0
+	move $a0, $a1
+	move $a1, $t1
+	j gcd_loop
 gcd_loop:
     beq $a1, $zero, gcd_done
 
@@ -112,9 +120,11 @@ find_lcm:
     #jal find_gcd
     move $t8, $v0
     div $v0, $t9,$t8
+    addi $s1,$s1, 4
+
  #lw $ra, 0($sp)          # Restore return address
 #addi $sp, $sp, 4        # Deallocate space on the stack
-jr $ra                  # Return to caller
+     jr $ra                  # Return to caller
     
     
 
