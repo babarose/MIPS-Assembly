@@ -23,6 +23,7 @@ main:
     la $s0, input_buf # get addresses
     la $s1, inputArray
     la $s2, outputArray
+    addi $s4, $zero, 1
     add $t2, $zero, $zero # current integer
     add $t3, $zero, $zero # check if more than a digit
     add $t5, $zero, $zero # count length
@@ -65,12 +66,13 @@ end_string:
     # Print the array
     la $s1, inputArray           # Load the base address of the array
     li $t2, 0               # Initialize counter for number of elements printed
+	
 	addi $s7, $s3, -1
 	lw $t4, 0($s1)
 	sw $t4, 0($s2)
 check:
 	addi $t6, $t6, 1 
-	beq $t6, $s7, print_output
+	beq $t6, $s3, print_output
 	jal find_gcd
 	
 	move $t7, $v0
@@ -113,7 +115,7 @@ find_lcm:
 #addi $sp, $sp, -4       # Allocate space on the stack for 1 word
 #sw $ra, 0($sp)          # Save return address
 
-    lw $a0, 0($s1)  # $input arrayndedaki değer $a0'ye kopyalanır
+    lw $a0, 0($s2)  # $input arrayndedaki değer $a0'ye kopyalanır
     lw $a1, 4($s1)
     
     mul $t9, $a0, $a1
@@ -130,16 +132,18 @@ find_lcm:
 
     
 outputArray_gcd:
- 	   lw $s6, 0($s1)
- 	   j outputArray_write
-outputArray_lcm:
-	move $s6, $t8
-	j outputArray_write
-outputArray_write:
-	sw $s6, 0($s2)
-	addi $s4, $s4, 1 #output array's counter
 	addi $s1, $s1 , 4
 	addi $s2, $s2 , 4
+	addi $s4 , $s4, 1
+	#$s4 burada artmalı
+ 	   lw $s6, 0($s1)
+ 	   sw $s6, 0($s2)
+j check
+
+outputArray_lcm:
+	move $s6, $t8
+	#addi $s1, $s1 , 4
+ 	   sw $s6, 0($s2)
 	j check
 
 
