@@ -1,16 +1,16 @@
-	.data
+.data
 aCoefficientPrompt: .asciiz "Please enter the coefficient a: "
 bCoefficientPrompt: .asciiz "Please enter the coefficient b: "
 
 firstNumberPrompt: .asciiz "Please enter the first number of the sequence: "
-secondNumberPrompt: .asciiz "Please enter the first second number of the sequence: "
+secondNumberPrompt: .asciiz "Please enter the second number of the sequence: "
 
 calculatePrompt: .asciiz "Enter the number you want to calculate: "
 output1: .asciiz "Output: "
 output2: .asciiz ". element of the sequence is "
 output3: .asciiz "."
 
-invalidInputMessage: .asciiz "Number you want to calculate is less than 1. Please enter a number that greater than 1: "
+invalidInputMessage: .asciiz "Number you want to calculate is less than 1. Please enter a number that greater than 1"
 	.text
 	
 main:
@@ -55,8 +55,7 @@ main:
 	syscall
 	move $s4, $v0 # $s4 = calculation amount
 	
-	checkForValidinput:
-	slti $t0, $s4, 2
+	slti $t0, $s4, 1
 	beq $t0, 1, invalidInput
 	
 	j loopStart
@@ -109,9 +108,3 @@ invalidInput:
 	li $v0, 4
 	la $a0, invalidInputMessage
 	syscall
-	
-	li $v0, 5
-	syscall
-	move $s4, $v0 # $s4 = calculation amount
-	j checkForValidinput
-	

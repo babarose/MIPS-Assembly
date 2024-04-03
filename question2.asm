@@ -3,6 +3,7 @@
 inputArray: .space 1024
 outputArray: .space 1024
 prompt: .asciiz "Enter integers: "
+output_string: .asciiz "The new array is: "
 input_buf: .space 200
 
 .text
@@ -149,9 +150,11 @@ outputArray_lcm:
 
 
 print_output:
-
 	move $zero, $t2
 	la $s2, outputArray
+	li $v0, 4
+    	la $a0, output_string
+    	syscall
 	j print_loop
 	
 print_loop:
