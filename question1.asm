@@ -1,4 +1,4 @@
-	.data
+.data
 aCoefficientPrompt: .asciiz "Please enter the coefficient a: "
 bCoefficientPrompt: .asciiz "Please enter the coefficient b: "
 
